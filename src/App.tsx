@@ -5,13 +5,13 @@ import CarDisplay from "./pages/CarDisplay";
 import CartPage from "./pages/CartPage";
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/cart" element={<CartPage />} />
-      <Route path="/cars" element={<CarDisplay />} />
-    </Routes>
-  );
+	return (
+		<Routes>
+			<Route path="/" element={<HomePage />} />
+			<Route path="/cart" element={<CartPage />} />
+			<Route path="/cars/:id" element={<CarDisplay />} />
+		</Routes>
+	);
 }
 
 export default App;

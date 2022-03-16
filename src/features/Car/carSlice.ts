@@ -1,41 +1,39 @@
-import { createSlice } from "@reduxjs/toolkit";
-import React from "react";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { carsData } from "../../carsData";
 
 // Define a type for the slice state
 interface CarState {
-  cars: Car[];
+	cars: Car[];
 }
 
 type Car = {
-  id: number;
-  title: string;
-  description: string;
-  backgroundImg: string;
-  leftBtnText: string;
-  rightBtnText: string;
-  ref: React.MutableRefObject<any> | null;
+	id: number;
+	title: string;
+	description: string;
+	backgroundImg: string;
+	leftBtnText: string;
+	rightBtnText: string;
+	ref: any;
+	price: number;
+	highlights: string[];
 };
 
 const initialState: CarState = {
-  cars: [...carsData],
+	cars: [...carsData],
 };
 
 export const carSlice = createSlice({
-  name: "car",
-  initialState,
-  reducers: {
-    setCarRef: (state, action) => {
-      let [car] = state.cars.filter((item) => item.id === action.payload.id);
-      let [...cars] = state.cars.filter(
-        (item) => item.id !== action.payload.id
-      );
-
-      car.ref = action.payload.ref;
-      state.cars = [...cars, car];
-    },
-  },
+	name: "car",
+	initialState,
+	reducers: {
+		setCarRef: (state, action) => {
+			let [car] = state.cars.filter((item) => item.id === action.payload.id);
+			let [...cars] = state.cars.filter((item) => item.id !== action.payload.id);
+			car.ref = action.payload.ref.current;
+			state.cars = [...cars, car];
+		},
+	},
 });
 
 export const { setCarRef } = carSlice.actions;
