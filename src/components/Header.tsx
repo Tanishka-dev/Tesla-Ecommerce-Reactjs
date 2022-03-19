@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import MenuIcon from "@material-ui/icons/Menu";
-import CloseIcon from "@material-ui/icons/Close";
 import { selectCars } from "../features/Car/carSlice";
 import { useSelector } from "react-redux";
+import { MenuIcon, XIcon } from "@heroicons/react/solid";
 
 interface HeaderInterface {
 	homeRef: React.RefObject<HTMLDivElement>;
@@ -37,11 +36,16 @@ function Header(props: HeaderInterface) {
 			<RightMenu>
 				<a href="#">Shop</a>
 				<a href="#">Account</a>
-				<CustomMenu onClick={() => setBurgerStatus(true)} />
+
+				<CustomMenu
+					className="md:hidden block h-6 w-6"
+					onClick={() => setBurgerStatus(true)}
+				/>
 			</RightMenu>
+
 			<BurgerNav show={burgerStatus}>
 				<CloseWrapper>
-					<CustomClose onClick={() => setBurgerStatus(false)} />
+					<CustomClose className="h-6 w-6" onClick={() => setBurgerStatus(false)} />
 				</CloseWrapper>
 				<ul>
 					{cars &&
@@ -84,12 +88,13 @@ const Menu = styled.div`
 	align-items: center;
 	flex: 1;
 	h1 {
-		font-size: 16px;
-		font-weight: 700;
 		cursor: pointer;
 		text-transform: uppercase;
 		padding: 0 10px;
 		flex-wrap: nowrap;
+	}
+	@media (max-width: 768px) {
+		display: none;
 	}
 `;
 
@@ -100,9 +105,6 @@ const RightMenu = styled.div`
 		font-weight: 600;
 		text-transform: uppercase;
 		margin-right: 10px;
-	}
-	@media (max-width: 768px) {
-		display: none;
 	}
 `;
 
@@ -143,9 +145,8 @@ type StyledProps = {
 	show: boolean;
 };
 
-const CustomClose = styled(CloseIcon)`
+const CustomClose = styled(XIcon)`
 	cursor: pointer;
-	margin-right: 30px;
 `;
 
 const CloseWrapper = styled.div`
