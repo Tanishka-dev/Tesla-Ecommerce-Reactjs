@@ -1,50 +1,62 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
+import { RootState, useAppSelector } from "../../app/store";
 import { carsData } from "../../carsData";
-import ActionTypes from "../constants/action-types";
 
 // Define a type for the slice state
 interface CarState {
-	cars: Car[];
+   cars: Car[];
+   cart: Car[];
 }
 
 type Car = {
-	id: number;
-	title: string;
-	description: string;
-	backgroundImg: string;
-	ref: any;
-	price: number;
-	highlights: string[];
+   id: number;
+   title: string;
+   inStock: boolean;
+   description: string;
+   backgroundImg: string;
+   ref: any;
+   price: number;
+   highlights: string[];
 };
 
 const initialState: CarState = {
-	cars: [...carsData],
+   cars: [...carsData],
+   cart: [],
 };
 
 export const carSlice = createSlice({
-	name: "car",
-	initialState,
-	reducers: {
-		setCarRef: (state, action) => {
-			let [car] = state.cars.filter((item) => item.id === action.payload.id);
-			let [...cars] = state.cars.filter((item) => item.id !== action.payload.id);
-			car.ref = action.payload.ref.current;
-			state.cars = [...cars, car];
-		},
+   name: "car",
+   initialState,
+   reducers: {
+      setCarRef: (state, action) => {
+         let [car] = state.cars.filter((item) => item.id === action.payload.id);
+         let [...cars] = state.cars.filter(
+            (item) => item.id !== action.payload.id
+         );
+         car.ref = action.payload.ref.current;
+         state.cars = [...cars, car];
+      },
 
-		productReducer: (state, action) => {
-			switch (action.type) {
-				case ActionTypes.SELECTED_PRODUCT:
-					return { ...state, cars: action.payload };
-				default:
-					return state;
-			}
-		},
-	},
+      addToCart: (state, action) => {
+         let car = state.cart.find((item) => {
+            return item.id === action.payload;
+         });
+         if (car) return;
+         let [_car] = state.cars.filter((item) => item.id === action.payload);
+         state.cart = [...state.cart, _car];
+      },
+
+      removeFromCart: (state, action) => {
+         let [..._car] = state.cart.filter(
+            (item) => item.id !== action.payload
+         );
+
+         state.cart = [..._car];
+      },
+   },
 });
 
-export const { productReducer } = carSlice.actions;
-export const { setCarRef } = carSlice.actions;
+export const { setCarRef, addToCart, removeFromCart } = carSlice.actions;
 export const selectCars = (state: RootState) => state.car.cars;
+
 export default carSlice.reducer;

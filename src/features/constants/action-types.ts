@@ -1,7 +1,0 @@
-export const ActionTypes = {
-  SET_PROUDUCTS: "SET_PROUDUCTS",
-  SELECTED_PRODUCT: "SELECTED_PRODUCT",
-  REMOVE_SELECTED_PRODUCT: "REMOVE_SELECTED_PRODUCT",
-};
-
-export default ActionTypes;
