@@ -2,8 +2,8 @@ import React from "react";
 import { StarIcon } from "@heroicons/react/solid";
 import { useParams } from "react-router-dom";
 import { carsData } from "../carsData";
+import { CheckIcon, ClockIcon } from "@heroicons/react/solid";
 
-import Header from "./Header";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../features/Car/carSlice";
 
@@ -71,10 +71,24 @@ export default function CarDetail() {
 
                   <p className="text-gray-500 mt-6">{product.description}</p>
 
-                  <p className="">
+                  <p className="mt-4 font-bold text-lg">
                      Price- $
                      {new Intl.NumberFormat("en-GB").format(product.price)}
                   </p>
+                  <div className="flex gap-2 items-center mt-4">
+                     {product.inStock ? (
+                        <CheckIcon
+                           className="flex-shrink-0 h-5 w-5 text-green-500"
+                           aria-hidden="true"
+                        />
+                     ) : (
+                        <ClockIcon
+                           className="flex-shrink-0 h-5 w-5 text-gray-300"
+                           aria-hidden="true"
+                        />
+                     )}
+                     {product.inStock ? "In Stock!" : "Out Of Stock!"}
+                  </div>
 
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                      <button
@@ -87,7 +101,7 @@ export default function CarDetail() {
                   </div>
 
                   <div className="border-t border-gray-200 mt-10 pt-10">
-                     <h3 className="text-sm font-medium text-gray-900">
+                     <h3 className="text-gray-900 mt-4 font-bold text-lg">
                         Highlights
                      </h3>
                      <div className="mt-4 prose prose-sm text-gray-500">

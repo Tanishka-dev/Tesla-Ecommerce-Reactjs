@@ -9,24 +9,26 @@ import { FaOpencart } from "react-icons/fa";
 
 interface HeaderInterface {
    homeRef?: React.RefObject<HTMLDivElement>;
+   bgColor?: string;
 }
 
 function Header(props: HeaderInterface) {
    const navigation = useNavigate();
-   const { homeRef } = props;
+   const { homeRef, bgColor } = props;
    const [burgerStatus, setBurgerStatus] = useState(false);
    const cars = useSelector(selectCars);
 
    const cartData = useCartState();
 
    return (
-      <Container>
-         <a>
+      <Container className={bgColor ? bgColor : ""}>
+         <Link to="/">
             <img src="/images/logo.svg"></img>
-         </a>
-         <Menu>
+         </Link>
+         <Menu className="flex gap-2">
             {cars.map((car) => (
                <h1
+                  className="text-black bg-transparent rounded-lg px-2.5 py-1.5 hover:text-white hover:bg-gray-800 cursor-pointer hover:bg-opacity-30 transition-colors"
                   onClick={() => {
                      homeRef
                         ? homeRef.current?.scrollTo({
@@ -42,7 +44,15 @@ function Header(props: HeaderInterface) {
             ))}
          </Menu>
          <RightMenu>
-            <Link className="flex relative items-center gap-1" to={`/cart`}>
+            <h1
+               className="text-black bg-transparent rounded-lg px-2.5 py-1.5 hover:text-white hover:bg-gray-800 cursor-pointer hover:bg-opacity-30 transition-colors mr-2"
+               onClick={() => {
+                  navigation(`/login`);
+               }}
+            >
+               Sign In
+            </h1>
+            <Link className="flex relative items-center" to={`/cart`}>
                <FaOpencart className="h-8 w-8 " />
                <p className="absolute -top-3 right-1 flex items-center justify-center bg-red-600 text-white h-5 w-5 text-sm font-bold rounded-full">
                   {cartData.length}
@@ -104,12 +114,6 @@ const Menu = styled.div`
    justify-content: center;
    align-items: center;
    flex: 1;
-   h1 {
-      cursor: pointer;
-      text-transform: uppercase;
-      padding: 0 10px;
-      flex-wrap: nowrap;
-   }
    @media (max-width: 768px) {
       display: none;
    }

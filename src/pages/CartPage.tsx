@@ -1,19 +1,3 @@
-/*
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 import {
    CheckIcon,
    ClockIcon,
@@ -26,6 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { removeFromCart } from "../features/Car/carSlice";
 import { useCartState } from "../hooks/useReducerState";
 import { ImSad } from "react-icons/im";
+import Header from "../components/Header";
 
 export default function CartPage() {
    const dispatch = useDispatch();
@@ -45,6 +30,7 @@ export default function CartPage() {
 
    return (
       <div className="bg-white">
+         <Header bgColor={"bg-white border-b"} />
          <div className="max-w-2xl mx-auto pt-16 pb-24 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
             <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
                Cart
