@@ -6,6 +6,7 @@ import { carsData } from "../../carsData";
 interface CarState {
    cars: Car[];
    cart: Car[];
+   total: number;
 }
 
 type Car = {
@@ -17,17 +18,32 @@ type Car = {
    ref: any;
    price: number;
    highlights: string[];
+   quantity: number;
 };
 
 const initialState: CarState = {
    cars: [...carsData],
    cart: [],
+   total: 0,
 };
 
 export const carSlice = createSlice({
    name: "car",
    initialState,
    reducers: {
+      setTotal: (state, action) => {
+         state.total = action.payload;
+      },
+
+      setQuantity: (state, action) => {
+         let [car] = state.cart.filter((item) => item.id === action.payload.id);
+         let [...cars] = state.cart.filter(
+            (item) => item.id !== action.payload.id
+         );
+         car.quantity = action.payload.quantity;
+         state.cart = [...cars, car];
+      },
+
       setCarRef: (state, action) => {
          let [car] = state.cars.filter((item) => item.id === action.payload.id);
          let [...cars] = state.cars.filter(
@@ -56,7 +72,8 @@ export const carSlice = createSlice({
    },
 });
 
-export const { setCarRef, addToCart, removeFromCart } = carSlice.actions;
+export const { setCarRef, addToCart, removeFromCart, setTotal, setQuantity } =
+   carSlice.actions;
 export const selectCars = (state: RootState) => state.car.cars;
 
 export default carSlice.reducer;

@@ -3,9 +3,9 @@ import { StarIcon } from "@heroicons/react/solid";
 import { useParams } from "react-router-dom";
 import { carsData } from "../carsData";
 import { CheckIcon, ClockIcon } from "@heroicons/react/solid";
-
 import { useDispatch } from "react-redux";
 import { addToCart } from "../features/Car/carSlice";
+import { useUserData } from "../features/User/userSlice";
 
 interface CarDetailInterface {
    homeRef: React.RefObject<HTMLDivElement>;
@@ -19,6 +19,8 @@ export default function CarDetail() {
    const { id } = useParams();
    const [product] = carsData.filter((car) => car.id === parseInt(id ?? ""));
    const dispatch = useDispatch();
+
+   const { user } = useUserData();
 
    return (
       <div className="bg-white">
@@ -92,9 +94,16 @@ export default function CarDetail() {
 
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                      <button
-                        onClick={() => dispatch(addToCart(product.id))}
+                        disabled={!product.inStock}
+                        onClick={() => {
+                           dispatch(addToCart(product.id));
+                        }}
                         type="button"
-                        className="w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
+                        className={
+                           product.inStock
+                              ? "w-full  bg-indigo-600   border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
+                              : "w-full  bg-indigo-600 opacity-30 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white"
+                        }
                      >
                         Add to cart
                      </button>

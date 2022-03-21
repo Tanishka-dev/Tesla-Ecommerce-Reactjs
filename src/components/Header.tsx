@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { selectCars } from "../features/Car/carSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MenuIcon, XIcon } from "@heroicons/react/solid";
 import { Link, useNavigate } from "react-router-dom";
 import { useCartState } from "../hooks/useReducerState";
 import { FaOpencart } from "react-icons/fa";
+import { useAppSelector } from "../app/store";
+import { setLogout } from "../features/User/userSlice";
 
 interface HeaderInterface {
    homeRef?: React.RefObject<HTMLDivElement>;
@@ -13,11 +15,12 @@ interface HeaderInterface {
 }
 
 function Header(props: HeaderInterface) {
+   const user = useAppSelector((state) => state.user);
    const navigation = useNavigate();
    const { homeRef, bgColor } = props;
    const [burgerStatus, setBurgerStatus] = useState(false);
    const cars = useSelector(selectCars);
-
+   const dispatch = useDispatch();
    const cartData = useCartState();
 
    return (
@@ -44,20 +47,41 @@ function Header(props: HeaderInterface) {
             ))}
          </Menu>
          <RightMenu>
-            <h1
-               className="text-black bg-transparent rounded-lg px-2.5 py-1.5 hover:text-white hover:bg-gray-800 cursor-pointer hover:bg-opacity-30 transition-colors mr-2"
-               onClick={() => {
-                  navigation(`/login`);
-               }}
-            >
-               Sign In
-            </h1>
+            {user.isLoggedIn ? (
+               <>
+                  <h1
+                     className="text-black bg-transparent rounded-lg px-2.5 py-1.5 hover:text-white hover:bg-gray-800 cursor-pointer hover:bg-opacity-30 transition-colors mr-2"
+                     onClick={() => {
+                        dispatch(setLogout());
+                        window.location.reload();
+                     }}
+                  >
+                     Logout
+                  </h1>
+               </>
+            ) : (
+               <h1
+                  className="text-black bg-transparent rounded-lg px-2.5 py-1.5 hover:text-white hover:bg-gray-800 cursor-pointer hover:bg-opacity-30 transition-colors mr-2"
+                  onClick={() => {
+                     navigation(`/login`);
+                  }}
+               >
+                  Sign In
+               </h1>
+            )}
+
             <Link className="flex relative items-center" to={`/cart`}>
                <FaOpencart className="h-8 w-8 " />
                <p className="absolute -top-3 right-1 flex items-center justify-center bg-red-600 text-white h-5 w-5 text-sm font-bold rounded-full">
                   {cartData.length}
                </p>
             </Link>
+
+            {user.isLoggedIn && (
+               <p className="text-base font-semibold mx-2 bg-red-600 text-black px-2 rounded-full">
+                  {user.user?.displayName?.substring(0, 1)}
+               </p>
+            )}
 
             <CustomMenu
                className="md:hidden block h-6 w-6"

@@ -14,6 +14,7 @@ export const carsData = [
          "Full Self-Driving Computer",
          "Traffic Light and Stop Sign Control",
       ],
+      quantity: 1,
       ref: null,
    },
    {
@@ -32,6 +33,7 @@ export const carsData = [
 
          "Traffic Light and Stop Sign Control",
       ],
+      quantity: 1,
       ref: null,
    },
    {
@@ -49,6 +51,7 @@ export const carsData = [
          "Full Self-Driving Computer",
          "Traffic Light and Stop Sign Control",
       ],
+      quantity: 1,
       ref: null,
    },
    {
@@ -69,6 +72,7 @@ export const carsData = [
          "Full Self-Driving Computer",
          "Traffic Light and Stop Sign Control",
       ],
+      quantity: 1,
       ref: null,
    },
 ];

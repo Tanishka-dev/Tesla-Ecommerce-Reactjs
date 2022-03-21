@@ -1,76 +1,52 @@
-import React, { useState, BaseSyntheticEvent } from "react";
+import React, { useState, useRef, BaseSyntheticEvent } from "react";
 // Import the functions you need from the SDKs you need
 
 import { Link, useNavigate } from "react-router-dom";
 import {
    getAuth,
-   signInWithEmailAndPassword,
-   signInWithPopup,
-   GoogleAuthProvider,
+   createUserWithEmailAndPassword,
+   updateProfile,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
-import { doc, setDoc } from "firebase/firestore";
-import { db, provider } from "../index";
-import { useDispatch } from "react-redux";
-import { setLogin } from "../features/User/userSlice";
-export default function LoginPage() {
+export default function RegisterPage() {
    const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
-
+   const [name, setName] = useState("");
+   const [password, setPass] = useState("");
+   const [conPass, setConPass] = useState("");
    const navigation = useNavigate();
-   const dispatch = useDispatch();
 
-   const auth = getAuth();
-   const login = async (e: BaseSyntheticEvent) => {
+   const [error, setError] = useState<string | undefined>();
+
+   const register = async (e: BaseSyntheticEvent) => {
       e.preventDefault();
-      signInWithEmailAndPassword(auth, email, password)
+      if (password !== conPass) {
+         setError("Passwords didn't match!");
+         return;
+      }
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, email, password)
          .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
-            console.log(user);
-            setDoc(
-               doc(db, "users", user.uid),
-               {
-                  name: user.displayName,
-                  email: user.email,
-               },
-               { merge: true }
-            );
+            if (!auth.currentUser) return;
 
-            dispatch(setLogin(user));
-
-            navigation("/");
-
-            // ...
+            updateProfile(auth.currentUser, {
+               displayName: name,
+            })
+               .then(() => {
+                  // Profile updated!
+                  // ...
+               })
+               .catch((error) => {
+                  // An error occurred
+                  // ...
+               });
+            navigation("/login");
          })
          .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorMessage);
-         });
-   };
-   const loginWithGoogle = () => {
-      signInWithPopup(auth, provider)
-         .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            if (!credential) return;
-            const token = credential.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            dispatch(setLogin(user));
-            navigation("/");
-            // ...
-         })
-         .catch((error) => {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
+            setError(errorMessage.split(": ")[1]);
          });
    };
 
@@ -82,13 +58,13 @@ export default function LoginPage() {
                   <img src="/images/logo.svg" className="mx-auto w-32"></img>
                </Link>
                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                  Sign in to your account
+                  Sign up to your account
                </h2>
                <div className="mt-2 text-center text-sm text-gray-600">
                   Or{" "}
-                  <Link to="/register">
+                  <Link to="/login">
                      <p className="font-medium text-indigo-600 hover:text-indigo-500">
-                        create new account
+                        Sign up
                      </p>
                   </Link>
                </div>
@@ -96,10 +72,30 @@ export default function LoginPage() {
 
             <form
                className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
-               onSubmit={login}
+               onSubmit={register}
             >
                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                  <div className="space-y-6">
+                  <div className="flex flex-col gap-6">
+                     <div>
+                        <label
+                           htmlFor="name"
+                           className="block text-sm font-medium text-gray-700"
+                        >
+                           Name
+                        </label>
+                        <div className="mt-1">
+                           <input
+                              id="name"
+                              name="name"
+                              type="name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              autoComplete="name"
+                              required
+                              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                           />
+                        </div>
+                     </div>
                      <div>
                         <label
                            htmlFor="email"
@@ -133,13 +129,37 @@ export default function LoginPage() {
                               name="password"
                               type="password"
                               value={password}
-                              onChange={(e) => setPassword(e.target.value)}
+                              onChange={(e) => setPass(e.target.value)}
                               autoComplete="current-password"
                               required
                               className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                            />
                         </div>
                      </div>
+                     <div>
+                        <label
+                           htmlFor="password"
+                           className="block text-sm font-medium text-gray-700"
+                        >
+                           Confirm Password
+                        </label>
+                        <div className="mt-1">
+                           <input
+                              id="conPassword"
+                              name="conPass"
+                              type="password"
+                              value={conPass}
+                              onChange={(e) => setConPass(e.target.value)}
+                              autoComplete="confirm-password"
+                              required
+                              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                           />
+                        </div>
+                     </div>
+
+                     {error && (
+                        <p className="text-rose-600 text-sm">*{error}</p>
+                     )}
 
                      <div className="flex items-center justify-between">
                         <div className="flex items-center">
@@ -171,7 +191,7 @@ export default function LoginPage() {
                            type="submit"
                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
-                           Sign in
+                           Sign up
                         </button>
                      </div>
                   </div>
@@ -188,17 +208,17 @@ export default function LoginPage() {
                         </div>
                      </div>
 
-                     <div className="mt-6">
+                     <div className="mt-6 ">
                         <div>
-                           <button
-                              onClick={() => loginWithGoogle()}
+                           <a
+                              href="#"
                               className="w-full inline-flex justify-center  py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                            >
                               <span className="sr-only">
                                  Sign in with Google
                               </span>
                               <FcGoogle className="h-8 w-8 " />
-                           </button>
+                           </a>
                         </div>
                      </div>
                   </div>
